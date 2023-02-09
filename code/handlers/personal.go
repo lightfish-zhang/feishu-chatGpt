@@ -40,13 +40,13 @@ func (p PersonalMessageHandler) handle(ctx context.Context, event *larkim.P2Mess
 	prompt = fmt.Sprintf("%s\nQ:%s\nA:", prompt, question)
 	completions, err := services.Completions(prompt)
 	if err != nil {
-		sendMsg(ctx, fmt.Sprintf("🤖️：AI机器人摆烂了，请稍后再试～ \n 错误: %v", err), chatId)
+		sendMsg(ctx, fmt.Sprintf("🤖️：AI机器人摆烂了，请稍后再试～\n错误信息: %v", err), chatId)
 		return nil
 	}
 	p.userCache.Set(*openId, question, completions)
 	err = sendMsg(ctx, completions, chatId)
 	if err != nil {
-		sendMsg(ctx, fmt.Sprintf("🤖️：消息机器人摆烂了，请稍后再试～ \n 错误: %v", err), chatId)
+		sendMsg(ctx, fmt.Sprintf("🤖️：消息机器人摆烂了，请稍后再试～\n错误信息: %v", err), chatId)
 		return nil
 	}
 	return nil

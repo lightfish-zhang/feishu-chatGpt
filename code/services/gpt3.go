@@ -3,7 +3,6 @@ package services
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -78,8 +77,8 @@ func Completions(msg string) (string, error) {
 		return "", err
 	}
 	defer response.Body.Close()
-	if response.StatusCode != 200 {
-		return "", errors.New(fmt.Sprintf("gtp api status code not equals 200,code is %d", response.StatusCode))
+	if response.StatusCode/2 != 100 {
+		return "", fmt.Errorf("gtp api %s", response.Status)
 	}
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
