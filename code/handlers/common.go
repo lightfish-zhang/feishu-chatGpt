@@ -20,7 +20,7 @@ func sendMsg(ctx context.Context, msg string, chatId *string) error {
 	}
 	client := initialization.GetLarkClient()
 	content := larkim.NewTextMsgBuilder().
-		TextLine(msg).
+		Text(msg).
 		Build()
 	fmt.Println("content", content)
 
