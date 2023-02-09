@@ -1,8 +1,10 @@
 package services
 
 import (
-	"github.com/patrickmn/go-cache"
+	"fmt"
 	"time"
+
+	"github.com/patrickmn/go-cache"
 )
 
 type UserService struct {
@@ -31,7 +33,7 @@ func (u UserService) Set(userId string, question, reply string) {
 	//如果满了，删除最早的一个
 	//如果没有满，直接添加
 	listOut := make([]string, 4)
-	value := "ask:" + question + "\n" + "answer:" + reply + "\n------------------------\n"
+	value := fmt.Sprintf("Q:%s\nA:%s\n\n", question, reply)
 
 	raw, ok := u.cache.Get(userId)
 	if ok {
