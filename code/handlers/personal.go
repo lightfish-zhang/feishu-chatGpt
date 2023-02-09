@@ -14,9 +14,11 @@ type PersonalMessageHandler struct {
 }
 
 func (p PersonalMessageHandler) handle(ctx context.Context, event *larkim.P2MessageReceiveV1) error {
-
 	content := event.Event.Message.Content
 	msgId := event.Event.Message.MessageId
+	sender := event.Event.Sender
+	openId := sender.SenderId.OpenId
+	chatId := event.Event.Message.ChatId
 	if p.msgCache.IfProcessed(*msgId) {
 		fmt.Println("msgId", *msgId, "processed")
 		return nil
@@ -27,19 +29,24 @@ func (p PersonalMessageHandler) handle(ctx context.Context, event *larkim.P2Mess
 		fmt.Println("msgId", *msgId, "message.text is empty")
 		return nil
 	}
-	sender := event.Event.Sender
-	openId := sender.SenderId.OpenId
+
+	if question == "/clear" || question == "清除记忆" {
+		p.userCache.Clear(*openId)
+		sendMsg(ctx, "🤖️：AI机器人已清除记忆", chatId)
+		return nil
+	}
+
 	prompt := p.userCache.Get(*openId)
 	prompt = fmt.Sprintf("%s\nQ:%s\nA:", prompt, question)
 	completions, err := services.Completions(prompt)
 	if err != nil {
-		sendMsg(ctx, fmt.Sprintf("🤖️：AI机器人摆烂了，请稍后再试～ \n 错误: %v", err), event.Event.Message.ChatId)
+		sendMsg(ctx, fmt.Sprintf("🤖️：AI机器人摆烂了，请稍后再试～ \n 错误: %v", err), chatId)
 		return nil
 	}
 	p.userCache.Set(*openId, question, completions)
-	err = sendMsg(ctx, completions, event.Event.Message.ChatId)
+	err = sendMsg(ctx, completions, chatId)
 	if err != nil {
-		sendMsg(ctx, fmt.Sprintf("🤖️：消息机器人摆烂了，请稍后再试～ \n 错误: %v", err), event.Event.Message.ChatId)
+		sendMsg(ctx, fmt.Sprintf("🤖️：消息机器人摆烂了，请稍后再试～ \n 错误: %v", err), chatId)
 		return nil
 	}
 	return nil
