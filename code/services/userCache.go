@@ -46,11 +46,11 @@ func (u UserService) Set(userId string, question, reply string) {
 		listOut = append(listOut, value)
 	}
 
-	//如果长度超过1000，删除最早的一个
-	if len(listOut) > 1000 {
+	//如果长度超过限制，删除最早的一个
+	for LenStrSlice(listOut) > 2048 {
 		listOut = listOut[1:]
 	}
-	u.cache.Set(userId, listOut, time.Minute*5)
+	u.cache.Set(userId, listOut, time.Hour)
 }
 
 func (u UserService) Clear(userId string) bool {
@@ -69,4 +69,11 @@ func GetUserCache() UserCacheInterface {
 		userServices = &UserService{cache: cache.New(10*time.Minute, 10*time.Minute)}
 	}
 	return userServices
+}
+
+func LenStrSlice(ss []string) (l int) {
+	for _, s := range ss {
+		l += len(s)
+	}
+	return
 }
