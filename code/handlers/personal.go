@@ -23,6 +23,10 @@ func (p PersonalMessageHandler) handle(ctx context.Context, event *larkim.P2Mess
 	}
 	p.msgCache.TagProcessed(*msgId)
 	question := parseContent(*content)
+	if len(question) == 0 {
+		fmt.Println("msgId", *msgId, "message.text is empty")
+		return nil
+	}
 	sender := event.Event.Sender
 	openId := sender.SenderId.OpenId
 	prompt := p.userCache.Get(*openId)

@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"regexp"
 	"start-feishubot/initialization"
+	"strings"
 
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )
 
 func sendMsg(ctx context.Context, msg string, chatId *string) error {
 	fmt.Println("sendMsg", msg, chatId)
-	msgB, _ := json.Marshal(msg)
+	msgB, _ := json.Marshal(strings.TrimSpace(msg))
 	msg = string(msgB)
 	if len(msg) >= 2 {
 		msg = msg[1 : len(msg)-1]
