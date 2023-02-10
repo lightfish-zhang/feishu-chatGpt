@@ -15,8 +15,8 @@ import (
 const (
 	BASEURL     = "https://api.openai.com/v1/"
 	maxTokens   = 2048
-	temperature = 0.1
-	top_p       = 0.1
+	temperature = 0.3
+	top_p       = 1
 	engine      = "text-davinci-003"
 )
 
